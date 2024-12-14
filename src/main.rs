@@ -57,7 +57,7 @@ fn simular_carros(
     acel_carro_2: f64,
 ) -> bool {
     // descrição do carro 1
-    let chassi_1 = 1111; // identificação de carro
+    let mut placa_1: String = String::from("ABC1111"); // identificação de carro
     let via_1: char = via_carro_1; // via deste carro
     let _acel_max_1 = ACELERACAO_MAXIMA; // metros por segundo ao quadrado
     let _acel_min_1 = ACELERACAO_MINIMA; // metros por segundo ao quadrado
@@ -68,7 +68,7 @@ fn simular_carros(
     let acel_atual_1: f64; // metros por segundo ao quadrado
 
     // descrição do carro 2
-    let chassi_2 = 2222; // identificação de carro
+    let mut placa_2: String = String::from("xyz2222"); // identificação de carro
     let via_2: char = via_carro_2; // via deste carro
     let _acel_max_2 = ACELERACAO_MAXIMA; // metros por segundo ao quadrado
     let _acel_min_2 = ACELERACAO_MINIMA; // metros por segundo ao quadrado
@@ -77,6 +77,18 @@ fn simular_carros(
     let mut pos_atual_2: f64 = -100.0; // metros do cruzamento
     let mut vel_atual_2: f64 = 0.0; // metros por segundo
     let acel_atual_2: f64; // metros por segundo ao quadrado
+
+    //verifica a validade das placas
+    placa_1 = placa_1.to_uppercase();
+    placa_2 = placa_2.to_uppercase();
+
+    if !valida_placa(&placa_1) {
+        panic!("Placa inválida: {}", placa_1);
+    }
+
+    if !valida_placa(&placa_2) {
+        panic!("Placa inválida: {}", placa_2);
+    }
 
     acel_atual_1 = acel_carro_1;
     acel_atual_2 = acel_carro_2;
@@ -111,7 +123,7 @@ fn simular_carros(
 
         println!(
             "Carro 1 {} na posição {}{}, velocidade {}, aceleração {}",
-            chassi_1, via_1, pos_atual_1, vel_atual_1, acel_atual_1
+            placa_1, via_1, pos_atual_1, vel_atual_1, acel_atual_1
         );
 
         // Atualiza o carro 2
@@ -137,7 +149,7 @@ fn simular_carros(
 
         println!(
             "Carro 2 {} na posição {}{}, velocidade {}, aceleração {}",
-            chassi_2, via_2, pos_atual_2, vel_atual_2, acel_atual_2
+            placa_2, via_2, pos_atual_2, vel_atual_2, acel_atual_2
         );
 
         // Detecta Colisão na via H
@@ -208,6 +220,39 @@ fn dentro_cruzamento(posicao: f64, comprimento: f64, via: char) -> bool {
                 } else {
                     VIA_H_LARGURA
                 }
+}
+
+fn valida_placa(placa: &str) -> bool {
+    // só aceita caracteres ASCII
+    if !placa.is_ascii() {
+        println!("Placa não é ASCII");
+        return false;
+    }
+
+    // só aceita placas velhas
+    if placa.len() != 7 {
+        println!("Placa não tem letras tamanho certo");
+        return false;
+    }
+
+    let inicio = &placa[0..3];
+    let fim = &placa[3..];
+
+    for x in inicio.chars() {
+        if !x.is_alphabetic() {
+            println!("Placa não começa com letras");
+            return false;
+        }
+    }
+
+    for x in fim.chars() {
+        if !x.is_ascii_digit() {
+            println!("Placa não termina com números");
+            return false;
+        }
+    }
+
+    true
 }
 
 fn main() {
